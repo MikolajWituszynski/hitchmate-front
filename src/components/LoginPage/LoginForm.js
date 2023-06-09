@@ -1,5 +1,5 @@
 import React from 'react';
-const LoginPage = () => {
+const LoginForm = () => {
   return (
     <div>
       <h1>Login Page</h1>
@@ -8,4 +8,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default LoginForm;

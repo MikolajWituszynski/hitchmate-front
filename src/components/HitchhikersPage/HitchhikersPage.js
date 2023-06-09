@@ -1,11 +1,14 @@
 import React from 'react';
-const LoginPage = () => {
+import NavBar from '../layout/NavBar/NavBar';
+
+const HitchhikersPage = () => {
   return (
     <div>
+        <NavBar/>
       <h1>Login Page</h1>
       {/* Add your registration form or components here */}
     </div>
   );
 };
 
-export default LoginPage;
+export default HitchhikersPage;
