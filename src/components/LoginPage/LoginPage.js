@@ -1,9 +1,11 @@
 import React from 'react';
+import LoginForm from './LoginForm';
+import NavBar from '../layout/NavBar/NavBar';
 const LoginPage = () => {
   return (
     <div>
-      <h1>Login Page</h1>
-      {/* Add your registration form or components here */}
+      <NavBar/>
+      <LoginForm/>
     </div>
   );
 };
