@@ -1,6 +1,6 @@
 import React from 'react';
-import useForm from "../utils/useForm";
-import validate from "../utils/LoginFormValdiationRules";
+import  {useForm} from 'react-hook-form'
+import {Routes, Route, useNavigate} from 'react-router-dom';
 
 const LoginForm = () => {
   
@@ -9,53 +9,47 @@ const LoginForm = () => {
      handleSubmit,
      formState: { errors },
     } = useForm();
-    const 
- 
-  function login() {
-    console.log('No errors, submit callback called!')
-    console.log(values)
-  }
+   
+  const onSubmit = (data,e) => {
+    e.preventDefault();
+    console.log(data);
+    alert(`You are logged in ${data.username}`);
+  };
+
+  const navigateToHome = () => {
+    console.log("click")
+    navigate('/');
+  };
+  
   return (
     <div>
-    <div className="flex flex-col items-center justify-center h-screen ">
+    <div className="flex flex-col items-center justify-center h-screen  ">
       <h1 className="text-2xl font-bold mb-4">Login Form</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col px-4 py-4 border-2 shadow" noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col px-6 py-6 border-2 shadow" noValidate>
+      <p className="text-red-700 rounded relative">{errors.username?.message}</p>
       <input 
-      name="username"
+       name="username"
       className="px-3 py-3 border rounded mb-2"  
       placeholder="username" 
-      onChange={handleChange} 
-      value={values.username || ''} 
-      required />
-      <div>
+      {...register("username", {required: 'Username is required', })} />
+      <p className="text-red-700 rounded relative">{errors.email?.message}</p>
       <input 
       type="email" 
       name="email"
       className="px-3 py-3 border rounded mb-2"
        placeholder="email" 
-       onChange={handleChange} 
-       value={values.email || ''} 
+       {...register("email", {required: "Email is required",  })}
        required  
        autoComplete="off"/>
-      {errors.email && (
-                    <p>{errors.email}</p>
-                  )}
-      </div>
-      <div>
+       <p className="text-red-700 rounded relative" role="alert">{errors.password?.message}</p>
       <input
        type="password" 
        name="password"
        className="px-3 py-3 border rounded mb-2"
         placeholder="password" 
-        onChange={handleChange} 
-        value={values.password || ''} 
+        {...register("password", {required: 'Password is required', minLength: {value:8, message: "Password has less than 8 characters"}})}
         required />
-    
-      {errors.password && (
-                    <p>{errors.password}</p>
-                  )}
-      </div>
-        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
+        <button onClick={navigateToHome} type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
           Login
         </button>
       </form>
