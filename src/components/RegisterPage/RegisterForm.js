@@ -1,75 +1,70 @@
 import React from 'react';
-import useForm from "../utils/useForm";
-import validate from "../utils/LoginFormValdiationRules";
+import  {useForm} from 'react-hook-form'
 
 const RegisterForm = () => {
   
-  const { values, 
-    errors,
-    handleChange,
-     handleSubmit 
-    } = useForm(login,validate);
- 
-  function login() {
-    console.log('No errors, submit callback called!')
-    console.log(values)
+  const { 
+    register,
+     handleSubmit,
+     formState: { errors },
+     watch
+    } = useForm();
+
+    const onSubmit = (data, e) => {
+      e.preventDefault();
+      console.log(data);
+      alert(`You are registerd ${data.username}`);
+    };
+
+    const password = watch("password");
+  const confirmationPassword = (value) => {
+    if (value === password) {
+      return true;
+    } else {
+      return "Passwords do not match"
+    }
   }
+
+   
+ 
   return (
     <div>
     <div className="flex flex-col items-center justify-center h-screen ">
       <h1 className="text-2xl font-bold mb-4">Login Form</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col px-4 py-4 border-2 shadow" noValidate>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col px-4 py-4 border-2 shadow" noValidate>
+      {errors.username && <p className="text-red-700 rounded relative">{errors.username.message}</p>}
       <input 
       name="username"
       className="px-3 py-3 border rounded mb-2"  
       placeholder="username" 
-      onChange={handleChange} 
-      value={values.username || ''} 
+      {...register("username", {required: "Username is required"})}
       required />
-      <div>
+     {errors.email && <p className="text-red-700 rounded relative">{errors.email.message}</p>}
       <input 
       type="email" 
       name="email"
       className="px-3 py-3 border rounded mb-2"
        placeholder="email" 
-       onChange={handleChange} 
-       value={values.email || ''} 
-       required  
+       {...register("email", {required: "Email is required"})}
        autoComplete="off"/>
-      {errors.email && (
-                    <p>{errors.email}</p>
-                  )}
-      </div>
-      <div>
+      {errors.password && <p className="text-red-700 rounded relative">{errors.password.message}</p>}
       <input
        type="password" 
        name="password"
        className="px-3 py-3 border rounded mb-2"
         placeholder="password" 
-        onChange={handleChange} 
-        value={values.password || ''} 
-        required />
-    
-      {errors.password && (
-                    <p>{errors.password}</p>
-                  )}
-      </div>
-      <div>
-      <input
+        {...register("password",{ required: "Password is required", maxLength: 20, minLength:8 })} 
+        />
+        {errors.secondPassword && <p className="text-red-700 rounded relative">{errors.secondPassword.message}</p>}
+        <input
        type="password" 
-       name="password"
+       name="secondPassword"
        className="px-3 py-3 border rounded mb-2"
         placeholder="password" 
-        onChange={handleChange} 
-        value={values.password || ''} 
-        required />
-    
-      {errors.password && (
-                    <p>{errors.password}</p>
-                  )}
-      </div>
+        {...register("secondPassword",{ required: "Confrim your password", maxLength: 20, minLength:8, validate: confirmationPassword})} 
+        />
         <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
-          Login
+          Register
         </button>
       </form>
     </div>
