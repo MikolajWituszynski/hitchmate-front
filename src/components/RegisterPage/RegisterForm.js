@@ -1,19 +1,43 @@
-import React from 'react';
 import  {useForm} from 'react-hook-form'
+import axios from 'axios';
+import React, { useState } from 'react';
+import {Routes, Route, useNavigate} from 'react-router-dom';
+import {ThreeCircles} from  'react-loader-spinner'
+
 
 const RegisterForm = () => {
-  
+  const navigate = useNavigate();
+
   const { 
     register,
      handleSubmit,
      formState: { errors },
-     watch
+     watch,
     } = useForm();
 
-    const onSubmit = (data, e) => {
-      e.preventDefault();
-      console.log(data);
-      alert(`You are registerd ${data.username}`);
+    const [isRegistered, setIsRegistered] = useState(false);
+
+    const onSubmit = async (data) => {
+      const { secondPassword, ...formData } = data;
+     
+      try {
+        const checkUserResponse = await axios.get(`http://localhost:8080/api/users?email=${data.email}`);
+        const existingUser = checkUserResponse.data;
+        if(existingUser){ 
+          console.log("user exists")
+        } else {
+       
+       
+        const response = await axios.post('http://localhost:8080/register', formData);
+        console.log("Response: " + response.formData); 
+        setIsRegistered(true);
+        let timer = setTimeout(function() {
+          navigate("/home")
+      }, 6000);
+      }
+    } catch (error) {
+        console.error(error); 
+      }
     };
 
     const password = watch("password");
@@ -25,12 +49,30 @@ const RegisterForm = () => {
     }
   }
 
+
    
  
   return (
     <div>
     <div className="flex flex-col items-center justify-center h-screen ">
-      <h1 className="text-2xl font-bold mb-4">Login Form</h1>
+    <h1 className="text-2xl font-bold mb-4">Register Form</h1>
+      {isRegistered ? (
+        <div className="flex flex-col px-4 py-4 border-2 shadow items-center">
+        <p>You have registered, wait a sec you are being redirected to home page</p>
+        <ThreeCircles
+  height="50"
+  width="50"
+  color="#aaaaaa"
+  wrapperStyle={{}}
+  wrapperClass=""
+  visible={true}
+  ariaLabel="three-circles-rotating"
+  outerCircleColor=""
+  innerCircleColor=""
+  middleCircleColor=""
+/>
+        </div>
+      ) : (
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col px-4 py-4 border-2 shadow" noValidate>
       {errors.username && <p className="text-red-700 rounded relative">{errors.username.message}</p>}
       <input 
@@ -61,13 +103,15 @@ const RegisterForm = () => {
        name="secondPassword"
        className="px-3 py-3 border rounded mb-2"
         placeholder="password" 
-        {...register("secondPassword",{ required: "Confrim your password", maxLength: 20, minLength:8, validate: confirmationPassword})} 
+        {...register("secondPassword",{ required: "Confirm your password", maxLength: 20, minLength:8, validate: confirmationPassword, shouldUnregister: true})} 
         />
         <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded">
           Register
         </button>
       </form>
+  )}
     </div>
+    
     </div>
   );
 };
