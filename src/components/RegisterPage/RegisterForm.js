@@ -19,9 +19,10 @@ const RegisterForm = () => {
 
     const onSubmit = async (data) => {
       const { secondPassword, ...formData } = data;
+      console.log(data.username)
      
       try {
-        const checkUserResponse = await axios.get(`http://localhost:8080/api/users?email=${data.email}`);
+        const checkUserResponse = await axios.get(`http://localhost:8080/users?username=${formData.username}`);
         const existingUser = checkUserResponse.data;
         if(existingUser){ 
           console.log("user exists")
