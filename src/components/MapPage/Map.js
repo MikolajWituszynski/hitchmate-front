@@ -1,7 +1,8 @@
-// Map.js
+
 import React, { useEffect, useRef } from 'react';
 import loadGoogleMapsApi from './loadGoogleMapsApi';
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
+const fs = require("fs")
 // We define a functional component called Map
 // This component accepts props for apiKey, latitude (lat), longitude (lng), and zoom level
 const Map = ({ apiKey, lat, lng, zoom }) => {
@@ -9,7 +10,8 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
   // In this case, we're creating a reference to the div element that will contain our Google Map
   const mapContainerRef = useRef(null);
   const infoWindowRef = useRef(null); // Reference to the info window
-
+  
+  
   // useEffect is a Hook that allows you to perform side effects in function components
   // Here, we're using it to load the Google Maps API and initialize our map when the component mounts
   useEffect(() => {
@@ -27,9 +29,30 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
         });
         const infoWindow = new google.maps.InfoWindow(); // Create a new info window
         infoWindowRef.current = infoWindow; // Store the reference to the info window
-        
-        const geoJsonPath = new URL('../../countriesGeoJson/Czech_Republic.geojson', import.meta.url).href;
+       
+        map.addListener("rightclick", (e) => {
+          placeMarkerAndPanTo(e.latLng, map);
+        });
+      
   
+      function placeMarkerAndPanTo(latLng, map) {
+        new google.maps.Marker({
+          position: latLng,
+          map: map,
+        });
+        map.panTo(latLng);
+      }
+
+      function deletePlacedMarker(latLng, map) {
+        new google.maps.Marker({
+          position: latLng,
+          map: map,
+        });
+        map.panTo(latLng);
+      }
+        const geoJsonPath = new URL('../../countriesGeoJson/Czech_Republic.geojson', import.meta.url).href;
+        
+      
         map.data.loadGeoJson(geoJsonPath, {}, () => {
           let markers = [];
     
@@ -41,7 +64,9 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
                 position: geometry.get(),  // Get LatLng of the Point geometry
                 map: map // This is important to make sure your markers appear on the map
               });
+            
               markers.push(marker);
+            
             }
           });
     
