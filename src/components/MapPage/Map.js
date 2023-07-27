@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import loadGoogleMapsApi from './loadGoogleMapsApi';
-import { MarkerClusterer } from "@googlemaps/markerclusterer";
 
 const Map = ({ apiKey, lat, lng, zoom }) => {
   const mapContainerRef = useRef(null);
+  const [isEditOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     loadGoogleMapsApi(apiKey)
@@ -17,18 +17,19 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
 
         const editMarker = (marker) => {
           console.log("edit", marker);
+          const editWindow = new google.maps.InfoWindow({
+            content: `
+              <div id="content">
+                <p><button>Description</button></p>
+                <p><button>Photos</button></p>
+              </div>`
+          });
+          editWindow.open(map,marker);
+
         }
 
         const deleteMarker = (marker) => {
           marker.setMap(null);
-        }
-
-        const addMarker = (e) => {
-          const newMarker = new google.maps.Marker({
-            position: e.latLng,
-            map: map,
-          });
-          markers.push(newMarker);
         }
 
         map.addListener("click", (e) => {
@@ -50,6 +51,9 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
 
           newMarker.addListener("rightclick", (e) => {
             infoWindow.open(map, newMarker);
+            // if(editMarker) {
+            //   infoWindow.close(map, newMarker)
+            // }
           });
 
           // Add listeners to buttons when InfoWindow's dom is ready
