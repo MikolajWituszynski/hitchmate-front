@@ -1,12 +1,22 @@
-import React from 'react'
+import React from 'react';
 
-const markerMenu = () => {
+const MarkerMenu = () => {
+  const handleEditClick = () => {
+    console.log("Edit Marker button clicked");
+    // Add your logic for handling editing a marker
+  }
+
+  const handleDeleteClick = () => {
+    console.log("Delete Marker button clicked");
+    // Add your logic for handling deleting a marker
+  }
+
   return (
-        <div>
-            <button>Edit Marker</button>
-            <button>Delete Marker</button>
-        </div>
+    <div className="flex-col">
+      <button onClick={handleEditClick}>Edit Marker</button>
+      <button onClick={handleDeleteClick}>Delete Marker</button>
+    </div>
   )
 }
 
-export default markerMenu
+export default MarkerMenu;
