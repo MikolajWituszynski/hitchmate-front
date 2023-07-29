@@ -23,7 +23,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             position: e.latLng,
             map: map,
           });
-
+            
           const markerId = `content-${markerCounter}`; // Create a unique id for this marker
 
           const markerInfoWindow = new google.maps.InfoWindow({
