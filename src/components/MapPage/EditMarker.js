@@ -2,7 +2,10 @@ import React from 'react'
 
 const EditMarker = () => {
   return (
-    <div>asdasd</div>
+    <div>
+    <input>Description</input>
+    <button>How to get here ?</button>
+      </div>
   )
 }
 
