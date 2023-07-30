@@ -9,9 +9,8 @@ import { createRoot } from 'react-dom/client';
 const Map = ({ apiKey, lat, lng, zoom }) => {
   const mapContainerRef = useRef(null);
   const [selectedMarker, setSelectedMarker] = useState(null);
-  const [markerPixelPosition, setMarkerPixelPosition] = useState(null);
-
-  console.log("Here is the selected marker: ", selectedMarker); // Moved here
+  const [markerPixelPositionX, setMarkerPixelPositionX] = useState(null);
+  const [markerPixelPositionY, setMarkerPixelPositionY] = useState(null);
 
   const [markers, setMarkers] = useState([]);
 
@@ -35,7 +34,6 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             },
             map: map,
           });
-
           const markerId = `content-${markerCounter}`;
 
           markerInfoWindow = new google.maps.InfoWindow({
@@ -43,17 +41,26 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
           });
 
           markerClickListener = newMarker.addListener("click", (e) => {
-            console.log("Marker clicked!");
-
+            let scale = Math.pow(2, map.getZoom());
+            let nw = new google.maps.LatLng(
+              map.getBounds().getNorthEast().lat(),
+              map.getBounds().getSouthWest().lng()
+          );
+            let worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
+            let worldCoordinate = map.getProjection().fromLatLngToPoint(e.latLng);
+            console.log("World Coordinates: " + worldCoordinate)
             setSelectedMarker(newMarker);
+            console.log("marker: " + newMarker.getPosition().lat())
+            let pixelOffsetX = Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale)
+            let pixelOffsetY = Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale)
+            
+         
+          setMarkerPixelPositionX(pixelOffsetX)
+          setMarkerPixelPositionY(pixelOffsetY)
+          console.log(pixelOffsetX+ " " + pixelOffsetY )
 
           })
-          markerClickListener = newMarker.addListener("dbclick", (e) => {
-            console.log("Marker clicked!");
-
-            setSelectedMarker(null);
-
-          })
+         
 
           markerRightClickListener = newMarker.addListener("rightclick", (e) => {
             markerInfoWindow.open(map, newMarker);
@@ -71,8 +78,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             }
           });
 
-          setMarkers(prevMarkers => [...prevMarkers, newMarker]);
-          console.log("Here is the selected markers: ", markers); // Moved here
+          setMarkers(markers=> [...markers, newMarker]);
 
           markerCounter++;
         });
@@ -94,11 +100,16 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
   }, [apiKey, lat, lng, zoom]);
 
   return (
-    <div>
-      {selectedMarker && <MarkerInfo lat={selectedMarker.lat} lng={selectedMarker.lng} />}
-      <div ref={mapContainerRef} style={{ width: '100%', height: '100vh' }} />
+    <div style={{ position: 'relative', width: '100%', height: '100vh' }} ref={mapContainerRef}>
+      {selectedMarker && 
+        <MarkerInfo 
+          style={{left: `${markerPixelPositionX}px`, top: `${markerPixelPositionY}px`}} 
+          lat={selectedMarker.getPosition().lat()} 
+          lng={selectedMarker.getPosition().lng()} 
+        />
+      }
     </div>
   );
-};
+    }  
 
 export default Map;
