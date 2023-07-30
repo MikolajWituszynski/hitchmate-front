@@ -21,6 +21,8 @@ const MarkerMenu = () => {
     console.log(`Title: ${title}, Description: ${description}`);
     // Do something with title and description
     // Then close the edit view
+    setTitle(title);
+    setDescription(description);
     setEditIsShown(false);
   }
 

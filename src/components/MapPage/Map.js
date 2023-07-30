@@ -11,6 +11,9 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [markerPixelPositionX, setMarkerPixelPositionX] = useState(null);
   const [markerPixelPositionY, setMarkerPixelPositionY] = useState(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
 
   const [markers, setMarkers] = useState([]);
 
@@ -71,7 +74,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             let root = contentNode._reactRootContainer;
 
             if (root) {
-              root.render(<MarkerMenu />);
+              root.render(<MarkerMenu  />);
             } else {
               root = ReactDOM.createRoot(contentNode);
               root.render(<MarkerMenu />);
@@ -105,7 +108,9 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
         <MarkerInfo 
           style={{left: `${markerPixelPositionX}px`, top: `${markerPixelPositionY}px`}} 
           lat={selectedMarker.getPosition().lat()} 
-          lng={selectedMarker.getPosition().lng()} 
+          lng={selectedMarker.getPosition().lng()}
+          description={description}
+          title={title} 
         />
       }
     </div>
