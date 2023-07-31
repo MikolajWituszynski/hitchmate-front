@@ -8,6 +8,9 @@ const MarkerInfo = ({lat, lng,style, title, description}) => {
        
       <div>Latitude: {lat}</div>
         <div>Longitude: {lng}</div>
+        <div>Description</div>
+        <div>Description</div>
+
       </div>
     );
 }
