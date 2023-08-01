@@ -1,10 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
 
-const MarkerMenu = () => {
+const MarkerMenu = ({description, setDescription, title, setTitle}) => {
   const[isEditShown, setEditIsShown] = useState(false)
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  
 
   const handleEditClick = () => {
     setEditIsShown(true);
@@ -16,15 +15,15 @@ const MarkerMenu = () => {
     // Add your logic for handling deleting a marker
   }
 
-  const handleSave = (event) => {
-    event.preventDefault();
-    console.log(`Title: ${title}, Description: ${description}`);
-    // Do something with title and description
-    // Then close the edit view
-    setTitle(title);
-    setDescription(description);
-    setEditIsShown(false);
-  }
+  // const handleSave = (event) => {
+  //   event.preventDefault();
+  //   console.log(`Title: ${title}, Description: ${description}`);
+  //   // Do something with title and description
+  //   // Then close the edit view
+  //   setTitle(title);
+  //   setDescription(description);
+  //   setEditIsShown(false);
+  // }
 
   return (
         <div >
@@ -42,7 +41,6 @@ const MarkerMenu = () => {
               Description:
               <input className="border" type="text" name="name" onChange={(e) => setDescription(e.target.value)}/>
           </label>
-          <button type="submit" value="Submit" className="bg-blue-500 text-white rounded p-0.5 my-0.5" onClick={handleSave} >Save</button>
         </form>
         </div>}
         </div>

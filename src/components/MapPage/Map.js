@@ -30,20 +30,28 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
         let markerInfoWindow;
 
         mapClickListener = map.addListener("click", (e) => {
-          const newMarker = new google.maps.Marker({
-            position: {
-              lat: e.latLng.lat(),
-              lng: e.latLng.lng(),
-            },
-            map: map,
-          });
           const markerId = `content-${markerCounter}`;
+
+          const newMarkerData = {
+            marker: new google.maps.Marker({
+              position: {
+                lat:e.latLng.lat(),
+                lng:e.latLng.lng(),
+              },
+              map:map
+            }),
+            id:markerId,
+            title:"",
+            description:""
+          };
+
+         
 
           markerInfoWindow = new google.maps.InfoWindow({
             content: `<div id="${markerId}"></div>`,
           });
 
-          markerClickListener = newMarker.addListener("click", (e) => {
+          markerClickListener = newMarkerData.addListener("click", (e) => {
             let scale = Math.pow(2, map.getZoom());
             let nw = new google.maps.LatLng(
               map.getBounds().getNorthEast().lat(),
@@ -52,21 +60,20 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             let worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
             let worldCoordinate = map.getProjection().fromLatLngToPoint(e.latLng);
             console.log("World Coordinates: " + worldCoordinate)
-            setSelectedMarker(newMarker);
-            console.log("marker: " + newMarker.getPosition().lat())
+            setSelectedMarker(newMarkerData);
+            console.log("marker: " + newMarkerData.getPosition().lat())
             let pixelOffsetX = Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale)
             let pixelOffsetY = Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale)
             
          
           setMarkerPixelPositionX(pixelOffsetX)
           setMarkerPixelPositionY(pixelOffsetY)
-          console.log(pixelOffsetX+ " " + pixelOffsetY )
-
+          console.log(pixelOffsetX+ " " + pixelOffsetY)
           })
          
 
-          markerRightClickListener = newMarker.addListener("rightclick", (e) => {
-            markerInfoWindow.open(map, newMarker);
+          markerRightClickListener = newMarkerData.addListener("rightclick", (e) => {
+            markerInfoWindow.open(map, newMarkerData);
           });
 
           domReadyListener = google.maps.event.addListener(markerInfoWindow, 'domready', () => {
@@ -74,14 +81,15 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             let root = contentNode._reactRootContainer;
 
             if (root) {
-              root.render(<MarkerMenu  />);
+              root.render(<MarkerMenu title={newMarkerData.title} description={newMarkerData.description} setTitle={(title) => {newMarkerData.title=title;  setMarkers([...markers]);
+              }} setDescription={(description) => {newMarkerData.description = description; setMarkers(...[markers])}}  />);
             } else {
               root = ReactDOM.createRoot(contentNode);
-              root.render(<MarkerMenu />);
+              root.render(<MarkerMenu title={title} description={description} setTitle={setTitle} setDescription={setDescription}  />);
             }
           });
 
-          setMarkers(markers=> [...markers, newMarker]);
+          setMarkers(markers=> [...markers, newMarkerData]);
 
           markerCounter++;
         });
