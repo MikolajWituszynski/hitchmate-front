@@ -51,7 +51,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             content: `<div id="${markerId}"></div>`,
           });
 
-          markerClickListener = newMarkerData.addListener("click", (e) => {
+          markerClickListener = newMarkerData.marker.addListener("click", (e) => {
             let scale = Math.pow(2, map.getZoom());
             let nw = new google.maps.LatLng(
               map.getBounds().getNorthEast().lat(),
@@ -61,7 +61,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             let worldCoordinate = map.getProjection().fromLatLngToPoint(e.latLng);
             console.log("World Coordinates: " + worldCoordinate)
             setSelectedMarker(newMarkerData);
-            console.log("marker: " + newMarkerData.getPosition().lat())
+            console.log("marker: " + newMarkerData.marker.getPosition().lat())
             let pixelOffsetX = Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale)
             let pixelOffsetY = Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale)
             
@@ -72,7 +72,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
           })
          
 
-          markerRightClickListener = newMarkerData.addListener("rightclick", (e) => {
+          markerRightClickListener = newMarkerData.marker.addListener("rightclick", (e) => {
             markerInfoWindow.open(map, newMarkerData);
           });
 
@@ -81,11 +81,10 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             let root = contentNode._reactRootContainer;
 
             if (root) {
-              root.render(<MarkerMenu title={newMarkerData.title} description={newMarkerData.description} setTitle={(title) => {newMarkerData.title=title;  setMarkers([...markers]);
-              }} setDescription={(description) => {newMarkerData.description = description; setMarkers(...[markers])}}  />);
+              root.render(<MarkerMenu title={newMarkerData.title} description={newMarkerData.description} setTitle={setTitle} setDescription={setDescription} />);
             } else {
               root = ReactDOM.createRoot(contentNode);
-              root.render(<MarkerMenu title={title} description={description} setTitle={setTitle} setDescription={setDescription}  />);
+              root.render(<MarkerMenu title={newMarkerData.title} description={newMarkerData.description} setTitle={setTitle} setDescription={setDescription}  />);
             }
           });
 
@@ -108,15 +107,15 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
       .finally(() => {
         delete window.initMap;
       });
-  }, [apiKey, lat, lng, zoom]);
+  }, [apiKey, lat, lng, zoom, description, title]);
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }} ref={mapContainerRef}>
       {selectedMarker && 
         <MarkerInfo 
           style={{left: `${markerPixelPositionX}px`, top: `${markerPixelPositionY}px`}} 
-          lat={selectedMarker.getPosition().lat()} 
-          lng={selectedMarker.getPosition().lng()}
+          lat={selectedMarker.marker.getPosition().lat()} 
+          lng={selectedMarker.marker.getPosition().lng()}
           description={description}
           title={title} 
         />

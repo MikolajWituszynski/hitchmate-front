@@ -3,6 +3,9 @@ import React from 'react'
 const MarkerInfo = ({lat, lng,style, title, description}) => {
     console.log("markerInfo")
     console.log({description})
+    console.log({lat})
+    console.log({lng})
+    
     return (
       <div style={{ ...style, position: 'absolute', backgroundColor: 'white', zIndex: 1000 }}>
        

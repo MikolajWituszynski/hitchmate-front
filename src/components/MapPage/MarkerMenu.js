@@ -3,7 +3,9 @@ import { useState } from 'react';
 
 const MarkerMenu = ({description, setDescription, title, setTitle}) => {
   const[isEditShown, setEditIsShown] = useState(false)
-  
+  console.log("Marker menu")
+  console.log(isEditShown)
+ 
 
   const handleEditClick = () => {
     setEditIsShown(true);
