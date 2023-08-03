@@ -5,7 +5,7 @@ const MarkerMenu = ({description, setDescription, title, setTitle}) => {
   const[isEditShown, setEditIsShown] = useState(false)
   console.log("Marker menu")
   console.log(isEditShown)
- 
+ console.log({description})
 
   const handleEditClick = () => {
     setEditIsShown(true);

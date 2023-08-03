@@ -73,7 +73,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
          
 
           markerRightClickListener = newMarkerData.marker.addListener("rightclick", (e) => {
-            markerInfoWindow.open(map, newMarkerData);
+            markerInfoWindow.open(map, newMarkerData.marker);
           });
 
           domReadyListener = google.maps.event.addListener(markerInfoWindow, 'domready', () => {
