@@ -68,7 +68,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
          
           setMarkerPixelPositionX(pixelOffsetX)
           setMarkerPixelPositionY(pixelOffsetY)
-          console.log(pixelOffsetX+ " " + pixelOffsetY)
+          console.log("x :" + pixelOffsetX+ " y: " + pixelOffsetY)
           })
          
 
