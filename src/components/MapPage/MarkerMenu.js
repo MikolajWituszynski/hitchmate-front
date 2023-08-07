@@ -7,7 +7,8 @@ const MarkerMenu = ({description, setDescription, title, setTitle}) => {
   console.log(isEditShown)
  console.log({description})
 
-  const handleEditClick = () => {
+  const handleEditClick = (event) => {
+    
     setEditIsShown(true);
     
   }
@@ -17,15 +18,14 @@ const MarkerMenu = ({description, setDescription, title, setTitle}) => {
     // Add your logic for handling deleting a marker
   }
 
-  // const handleSave = (event) => {
-  //   event.preventDefault();
-  //   console.log(`Title: ${title}, Description: ${description}`);
-  //   // Do something with title and description
-  //   // Then close the edit view
-  //   setTitle(title);
-  //   setDescription(description);
-  //   setEditIsShown(false);
-  // }
+  const handleSave = (event) => {
+    event.preventDefault();
+    console.log(`Title: ${title}, Description: ${description}`);
+    // Do something with title and description
+    // Then close the edit view
+    setEditIsShown(false);
+   
+  }
 
   return (
         <div >
@@ -38,11 +38,14 @@ const MarkerMenu = ({description, setDescription, title, setTitle}) => {
         <form className="flex flex-col">
           <label>
               Title:
-              <input className="border " type="text" name="name" onChange={(e) => setTitle(e.target.value)}/>
+              <input className="border " type="text" name="name" onChange={(e) =>{ setTitle(e.target.value) 
+                                                                                  e.preventDefault()} }/>
           </label> <label>
               Description:
-              <input className="border" type="text" name="name" onChange={(e) => setDescription(e.target.value)}/>
-          </label>
+              <input className="border" type="text" name="name" onChange={(e) => {setDescription(e.target.value)
+                                                                                   e.preventDefault()}}/>
+         </label>
+         <buttono onClik={handleSave}>Save</buttono>
         </form>
         </div>}
         </div>

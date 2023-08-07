@@ -4,7 +4,6 @@ import ReactDOM from 'react-dom';
 import { useState } from 'react';
 import MarkerMenu from './MarkerMenu.js';
 import MarkerInfo from './MarkerInfo';
-import { createRoot } from 'react-dom/client';
 
 const Map = ({ apiKey, lat, lng, zoom }) => {
   const mapContainerRef = useRef(null);
@@ -107,7 +106,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
       .finally(() => {
         delete window.initMap;
       });
-  }, [apiKey, lat, lng, zoom, description, title]);
+  }, [apiKey, lat, lng, zoom]);
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }} ref={mapContainerRef}>
