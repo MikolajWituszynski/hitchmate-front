@@ -10,8 +10,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [markerPixelPositionX, setMarkerPixelPositionX] = useState(null);
   const [markerPixelPositionY, setMarkerPixelPositionY] = useState(null);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+
 
 
   const [markers, setMarkers] = useState([]);
@@ -80,10 +79,10 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             let root = contentNode._reactRootContainer;
 
             if (root) {
-              root.render(<MarkerMenu title={newMarkerData.title} description={newMarkerData.description} setTitle={setTitle} setDescription={setDescription} />);
+              root.render(<MarkerMenu title={newMarkerData.title} description={newMarkerData.description} setMarkerTitle={(title) => {newMarkerData.title = title; setMarkers([...markers])}} setMarkerDescription = {(description) => {newMarkerData.description=description; setMarkers([...markers])}} />)
             } else {
               root = ReactDOM.createRoot(contentNode);
-              root.render(<MarkerMenu title={newMarkerData.title} description={newMarkerData.description} setTitle={setTitle} setDescription={setDescription}  />);
+              root.render(<MarkerMenu title={newMarkerData.title} description={newMarkerData.description} setMarkerTitle={(title) => {newMarkerData.title = title; setMarkers([...markers])}} setMarkerDescription = {(description) => {newMarkerData.description=description; setMarkers([...markers])}} />)
             }
           });
 
@@ -115,8 +114,8 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
           style={{left: `${markerPixelPositionX}px`, top: `${markerPixelPositionY}px`}} 
           lat={selectedMarker.marker.getPosition().lat()} 
           lng={selectedMarker.marker.getPosition().lng()}
-          description={description}
-          title={title} 
+          description={selectedMarker.marker.description}
+          title={selectedMarker.marker.title} 
         />
       }
     </div>

@@ -1,14 +1,15 @@
 import React from 'react';
 import { useState } from 'react';
 
-const MarkerMenu = ({description, setDescription, title, setTitle}) => {
+const MarkerMenu = ({description, setMarkerDescription , title, setMarkerTitle}) => {
   const[isEditShown, setEditIsShown] = useState(false)
   console.log("Marker menu")
   console.log(isEditShown)
  console.log({description})
 
   const handleEditClick = (event) => {
-    
+    event.preventDefault();
+
     setEditIsShown(true);
     
   }
@@ -20,6 +21,7 @@ const MarkerMenu = ({description, setDescription, title, setTitle}) => {
 
   const handleSave = (event) => {
     event.preventDefault();
+    console.log("SAVE!")
     console.log(`Title: ${title}, Description: ${description}`);
     // Do something with title and description
     // Then close the edit view
@@ -38,14 +40,14 @@ const MarkerMenu = ({description, setDescription, title, setTitle}) => {
         <form className="flex flex-col">
           <label>
               Title:
-              <input className="border " type="text" name="name" onChange={(e) =>{ setTitle(e.target.value) 
+              <input className="border " type="text" name="name" onChange={(e) =>{ setMarkerTitle(e.target.value) 
                                                                                   e.preventDefault()} }/>
           </label> <label>
               Description:
-              <input className="border" type="text" name="name" onChange={(e) => {setDescription(e.target.value)
+              <input className="border" type="text" name="name" onChange={(e) => {setMarkerDescription(e.target.value)
                                                                                    e.preventDefault()}}/>
          </label>
-         <buttono onClik={handleSave}>Save</buttono>
+         <button onClick={handleSave}>Save</button>
         </form>
         </div>}
         </div>
