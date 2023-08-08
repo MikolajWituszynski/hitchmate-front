@@ -1,21 +1,37 @@
-import React from 'react'
+// MarkerInfo.js
 
-const MarkerInfo = ({lat, lng,style, title, description}) => {
-  console.log("markerInfo");
-  console.log("Title:", title);
-  console.log("Description:", description);
-  console.log("Lat:", lat);
-  console.log("Lng:", lng);
+const MarkerInfo = ({ lat, lng, style, title, description, onClose }) => {
+  console.log("description: " + description)
+  return (
+    <div>
     
-    return (
-      <div style={{ ...style, position: 'absolute', backgroundColor: 'white', zIndex: 1000 }}>
-       
-      <div>Latitude: {lat}</div>
-        <div>Longitude: {lng}</div>
-        <div>Title: {title}</div>
-        <div>Description: {description}</div>
-      </div>
-    );
-}
+        <div
+          className="bg-blue-500 rounded p-2 my-2"
+          style={{
+            ...style,
+            position: 'absolute',
+            backgroundColor: 'white',
+            zIndex: 1000,
+            display:"flex"
+          }}
+        >
+          <button
+            className="ml-auto"
+            onClick={onClose}
+            style={{ cursor: 'pointer' }}
+            
+          >
+            x
+          </button>
+          <div className="bg-blue-500 text-white rounded p-2 my-2">Title: {title}</div>
+          <div className="bg-blue-500 text-white rounded p-2 my-2">Description: {description}</div>
+          <div className="bg-blue-500 text-white rounded p-2 my-2">Latitude: {lat}</div>
+          <div className="bg-blue-500 text-white rounded p-2 my-2">Longitude: {lng}</div>
+          
+        </div>
+  
+    </div>
+  );
+};
 
-export default MarkerInfo
+export default MarkerInfo;
