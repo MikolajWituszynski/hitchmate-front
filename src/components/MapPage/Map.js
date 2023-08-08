@@ -56,7 +56,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
         let markerInfoWindow;
 
         mapClickListener = map.addListener("click", (e) => {
-          const markerId = `content-${markerCounter}`;
+          const markerId = markerCounter;
           console.log("marker ID: " + markerId)
           const newMarkerData = {
             marker: new google.maps.Marker({
