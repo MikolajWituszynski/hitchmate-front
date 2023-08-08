@@ -3,13 +3,10 @@ import { useState } from 'react';
 
 const MarkerMenu = ({description, setMarkerDescription , title, setMarkerTitle}) => {
   const[isEditShown, setEditIsShown] = useState(false)
-  console.log("Marker menu")
-  console.log(isEditShown)
- console.log({description})
+  
 
   const handleEditClick = (event) => {
     event.preventDefault();
-
     setEditIsShown(true);
     
   }
@@ -40,12 +37,10 @@ const MarkerMenu = ({description, setMarkerDescription , title, setMarkerTitle})
         <form className="flex flex-col">
           <label>
               Title:
-              <input className="border " type="text" name="name" onChange={(e) =>{ setMarkerTitle(e.target.value) 
-                                                                                  e.preventDefault()} }/>
+              <input className="border " type="text" name="name" onChange={(e) =>{ setMarkerTitle(e.target.value)}}/>
           </label> <label>
               Description:
-              <input className="border" type="text" name="name" onChange={(e) => {setMarkerDescription(e.target.value)
-                                                                                   e.preventDefault()}}/>
+              <input className="border" type="text" name="name" onChange={(e) => {setMarkerDescription(e.target.value)  }}/>
          </label>
          <button onClick={handleSave}>Save</button>
         </form>

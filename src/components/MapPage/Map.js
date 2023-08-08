@@ -114,8 +114,8 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
           style={{left: `${markerPixelPositionX}px`, top: `${markerPixelPositionY}px`}} 
           lat={selectedMarker.marker.getPosition().lat()} 
           lng={selectedMarker.marker.getPosition().lng()}
-          description={selectedMarker.marker.description}
-          title={selectedMarker.marker.title} 
+          description={selectedMarker.description}
+          title={selectedMarker.title} 
         />
       }
     </div>
