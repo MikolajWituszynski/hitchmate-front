@@ -25,8 +25,8 @@ const MarkerInfo = ({ lat, lng, style, title, description, onClose }) => {
           </button>
           <div className="bg-blue-500 text-white rounded p-2 my-2">Title: {title}</div>
           <div className="bg-blue-500 text-white rounded p-2 my-2">Description: {description}</div>
-          <div className="bg-blue-500 text-white rounded p-2 my-2">Latitude: {lat}</div>
-          <div className="bg-blue-500 text-white rounded p-2 my-2">Longitude: {lng}</div>
+          <div className="bg-blue-500 text-white rounded p-2 my-2">Latitude: {Math.round(lat*100)/100}</div>
+          <div className="bg-blue-500 text-white rounded p-2 my-2">Longitude: {Math.round(lng*100)/100}</div>
           
         </div>
   
