@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import { useState } from 'react';
 import MarkerMenu from './MarkerMenu.js';
 import MarkerInfo from './MarkerInfo';
+import axios from 'axios';
+ 
 
 const Map = ({ apiKey, lat, lng, zoom }) => {
   const mapContainerRef = useRef(null);
@@ -59,6 +61,9 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
           const markerId = markerCounter;
           console.log("marker ID: " + markerId)
           const newMarkerData = {
+            id: markerId,
+            title: "",
+            description: "",
             marker: new google.maps.Marker({
               position: {
                 lat: e.latLng.lat(),
@@ -66,11 +71,36 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
               },
               map: map
             }),
-            id: markerId,
-            title: "",
-            description: ""
+          
+          
           };
-
+          
+          function replacer(key, value) {
+            if (key === "marker") {
+              return {
+                lat: value.getPosition().lat(),
+                lng: value.getPosition().lng(),
+              };
+            }
+            return value;
+          }
+          
+          const jsonMarkerData = JSON.stringify(newMarkerData, replacer);
+          console.log(jsonMarkerData)
+         console.log("New Marker Data: " + newMarkerData.toString())
+          axios.post('http://localhost:8080/addMarker',jsonMarkerData,  {
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+            .then(response => {
+              console.log("Response Data:" + response.data)
+              const addedMarker = response.data;
+              setMarkers(prevMarkers => [...prevMarkers, addedMarker])
+            })
+            .catch(error => {
+              console.error('Error adding marker: ' + error)
+            })
           markerInfoWindow = new google.maps.InfoWindow({
             content: `<div id="${markerId}"></div>`,
           });
