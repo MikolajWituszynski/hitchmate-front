@@ -18,32 +18,6 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
     setSelectedMarker(null);
   };
 
-  const handleMarkerTitleChange = (markerId, newTitle) => {
-    setMarkers(prevMarkers =>
-      prevMarkers.map(markerData =>
-        markerData.id === markerId ? { ...markerData, title: newTitle } : markerData
-      )
-    );
-    if (selectedMarker && selectedMarker.id === markerId) {
-      setSelectedMarker(prevSelectedMarker => ({
-        ...prevSelectedMarker,
-        description: newTitle
-      }));
-    }
-  };
-  const handleMarkerDescriptionChange = (markerId, newDescription) => {
-    setMarkers(prevMarkers =>
-      prevMarkers.map(markerData =>
-        markerData.id === markerId ? { ...markerData, description: newDescription } : markerData
-      )
-    );
-    if (selectedMarker && selectedMarker.id === markerId) {
-      setSelectedMarker(prevSelectedMarker => ({
-        ...prevSelectedMarker,
-        description: newDescription
-      }));
-    }
-  };
 
   useEffect(() => {
     loadGoogleMapsApi(apiKey)
@@ -137,8 +111,21 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             root.render(<MarkerMenu
               title={newMarkerData.title}
               description={newMarkerData.description}
-              setMarkerTitle={newTitle => handleMarkerTitleChange(markerId, newTitle)}
-              setMarkerDescription={newDescription => handleMarkerDescriptionChange(markerId, newDescription)}
+              setMarkerDescription={newDescription => {
+                setSelectedMarker(prevSelectedMarker => ({
+                  ...prevSelectedMarker,
+                  description: newDescription
+                }))
+              }
+              }
+              setMarkerTitle={newTitle =>
+                setSelectedMarker(prevSelectedMarker => ({
+                  ...prevSelectedMarker,
+                  title: newTitle
+                }))
+              
+              }
+            
             />);
           });
 

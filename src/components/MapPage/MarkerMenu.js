@@ -3,7 +3,6 @@ import { useState } from 'react';
 
 const MarkerMenu = ({description, setMarkerDescription , title, setMarkerTitle}) => {
   const[isEditShown, setEditIsShown] = useState(false)
-  console.log("Description: " + description)
 
   const handleEditClick = (event) => {
     event.preventDefault();
@@ -12,7 +11,6 @@ const MarkerMenu = ({description, setMarkerDescription , title, setMarkerTitle})
   }
 
   const handleDeleteClick = () => {
-    console.log("Delete Marker button clicked");
     // Add your logic for handling deleting a marker
   }
 
@@ -22,7 +20,7 @@ const MarkerMenu = ({description, setMarkerDescription , title, setMarkerTitle})
     setMarkerTitle(title);
     setMarkerDescription(description);
     setEditIsShown(false);
-    console.log("Description: " + description)
+    console.log("Description in marker menu: " + description)
 
   };
 
