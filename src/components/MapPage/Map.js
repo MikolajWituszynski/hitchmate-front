@@ -75,17 +75,16 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
           
           };
           
-          function replacer(key, value) {
-            if (key === "marker") {
-              return {
-                lat: Math.round(value.getPosition().lat()*100)/100,
-                lng: Math.round(value.getPosition().lng()*100)/100,
-              };
-            }
-            return value;
-          }
+      
           
-          const jsonMarkerData = JSON.stringify(newMarkerData, replacer);
+          const jsonMarkerData = JSON.stringify({
+            id: newMarkerData.id,
+            title: newMarkerData.title,
+            description: newMarkerData.description,
+            lat:Math.round(newMarkerData.marker.position.lat()*100)/100,
+            lng:Math.round(newMarkerData.marker.position.lng()*100)/100
+
+          });
           console.log("jsonMarkerData: "  + jsonMarkerData)
           axios.post('http://localhost:8080/addMarker',jsonMarkerData,  {
   headers: {
@@ -93,7 +92,9 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
   }
 })
             .then(response => {
+              
               const addedMarker = response.data;
+              console.log(addedMarker)
               setMarkers(prevMarkers => [...prevMarkers, addedMarker])
             })
             .catch(error => {
