@@ -1,8 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
 
-const MarkerMenu = ({description, setMarkerDescription , title, setMarkerTitle}) => {
+const MarkerMenu = ({ setMarkerDescription , setMarkerTitle, title, description, onSave}) => {
   const[isEditShown, setEditIsShown] = useState(false)
+  const [newDescription, setNewDescription] = useState(description || ""); // Initialize with empty string
 
   const handleEditClick = (event) => {
     event.preventDefault();
@@ -16,9 +17,10 @@ const MarkerMenu = ({description, setMarkerDescription , title, setMarkerTitle})
 
   const handleSave = event => {
     event.preventDefault();
-    // Update the title and description using the provided functions
     setMarkerTitle(title);
-    setMarkerDescription(description);
+    setMarkerDescription(newDescription); // 
+    // Update the title and description using the provided functions
+    onSave(); // Call the onSave function to persist changes
     setEditIsShown(false);
     console.log("Description in marker menu: " + description)
 

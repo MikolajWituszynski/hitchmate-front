@@ -14,6 +14,9 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
   const [markerPixelPositionY, setMarkerPixelPositionY] = useState(null);
   const [markers, setMarkers] = useState([]);
 
+  const handleMarkerUpdate = (updatedMarker) => {
+    setSelectedMarker(updatedMarker);
+  };
   const handleCloseInfo = () => {
     setSelectedMarker(null);
   };
@@ -74,6 +77,33 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
             .catch(error => {
               console.error('Error adding marker: ' + error)
             })
+
+            const handleMarkerUpdate = (updatedMarker) => {
+              // Implement the logic to update the marker on the server or wherever you store your marker data
+              // For example, you can use axios to send a PUT request to update the marker
+              axios.put(`http://localhost:8080/updateMarker/${updatedMarker.id}`, updatedMarker)
+                .then(response => {
+                  // Assuming the server returns the updated marker
+                  const updatedMarkerFromServer = response.data;
+          
+                  // Update the marker in the markers state
+                  setMarkers(prevMarkers => prevMarkers.map(marker => {
+                    if (marker.id === updatedMarkerFromServer.id) {
+                      return updatedMarkerFromServer;
+                    } else {
+                      return marker;
+                    }
+                  }));
+          
+                  // Update the selectedMarker if it's the updated marker
+                  if (selectedMarker && selectedMarker.id === updatedMarkerFromServer.id) {
+                    setSelectedMarker(updatedMarkerFromServer);
+                  }
+                })
+                .catch(error => {
+                  console.error('Error updating marker: ' + error);
+                });
+            };
           markerInfoWindow = new google.maps.InfoWindow({
             content: `<div id="${markerId}"></div>`,
           });
@@ -108,25 +138,21 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
               root = ReactDOM.createRoot(contentNode);
             }
 
-            root.render(<MarkerMenu
-              title={newMarkerData.title}
-              description={newMarkerData.description}
-              setMarkerDescription={newDescription => {
-                setSelectedMarker(prevSelectedMarker => ({
-                  ...prevSelectedMarker,
-                  description: newDescription
-                }))
-              }
-              }
-              setMarkerTitle={newTitle =>
-                setSelectedMarker(prevSelectedMarker => ({
-                  ...prevSelectedMarker,
-                  title: newTitle
-                }))
-              
-              }
-            
-            />);
+            root.render(
+          <MarkerMenu 
+          description={selectedMarker.description}
+          title={selectedMarker.title}
+          setMarkerDescription={newDescription => {
+            const updatedMarker = { ...selectedMarker, description: newDescription };
+            setSelectedMarker(updatedMarker);
+          }}
+          setMarkerTitle={newTitle => {
+            const updatedMarker = { ...selectedMarker, title: newTitle };
+            setSelectedMarker(updatedMarker);
+          }}
+          onSave={() => handleMarkerUpdate(selectedMarker)} // Save changes to the selectedMarker
+          />
+        );
           });
 
           setMarkers(prevMarkers => [...prevMarkers, newMarkerData]);
@@ -152,7 +178,7 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }} ref={mapContainerRef}>
-      {selectedMarker && 
+      {selectedMarker && selectedMarker.marker &&
         <MarkerInfo 
           style={{left: `${markerPixelPositionX}px`, top: `${markerPixelPositionY}px`}} 
           lat={selectedMarker.marker.getPosition().lat()} 

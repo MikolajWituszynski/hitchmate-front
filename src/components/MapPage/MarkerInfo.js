@@ -1,7 +1,6 @@
 // MarkerInfo.js
 
 const MarkerInfo = ({ lat, lng, style, title, description, onClose }) => {
-  console.log("description: " + description)
   return (
     <div>
     
