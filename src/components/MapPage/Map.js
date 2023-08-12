@@ -22,10 +22,13 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
 
 const handleCloseMenu = () => {
  setMenuVisible(false)
+ 
+
 }
 
   const handleCloseInfo = () => {
     setInfoVisible(false)
+   
   };
 
   useEffect(() => {
@@ -82,6 +85,7 @@ const handleCloseMenu = () => {
           });
 
           markerClickListener = newMarkerData.marker.addListener('click', e => {
+            setInfoVisible(true);
             let scale = Math.pow(2, map.getZoom());
             let nw = new google.maps.LatLng(
               map.getBounds().getNorthEast().lat(),
@@ -105,6 +109,8 @@ const handleCloseMenu = () => {
           });
 
           markerRightClickListener = newMarkerData.marker.addListener('rightclick', e => {
+            setMenuVisible(true);
+
             let scale = Math.pow(2, map.getZoom());
             let nw = new google.maps.LatLng(
               map.getBounds().getNorthEast().lat(),

@@ -17,15 +17,8 @@ const MarkerMenu = ({ setMarkerDescription , setMarkerTitle, title, description,
 
   const handleSave = event => {
     event.preventDefault();
-    console.log("desc marker menu: " + newTitle)
-    console.log("title marker menu: " + newDescription)
     setMarkerTitle(newTitle);
     setMarkerDescription(newDescription);  
-    
-    // Update the title and description using the provided functions
-    console.log("desc marker menu: " + newTitle)
-    console.log("title marker menu: " + newDescription)
-
     setEditIsShown(false);
 
   };
