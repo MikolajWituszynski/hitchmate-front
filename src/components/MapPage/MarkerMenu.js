@@ -1,10 +1,10 @@
 import React from 'react';
 import { useState } from 'react';
 
-const MarkerMenu = ({ setMarkerDescription , setMarkerTitle, title, description, onSave}) => {
+const MarkerMenu = ({ setMarkerDescription , setMarkerTitle, title, description, style,onClose}) => {
   const[isEditShown, setEditIsShown] = useState(false)
-  const [newDescription, setNewDescription] = useState(description || ""); // Initialize with empty string
-
+  const [newDescription, setNewDescription] = useState(description || "");
+  const [newTitle, setNewTitle] = useState(title || "");
   const handleEditClick = (event) => {
     event.preventDefault();
     setEditIsShown(true);
@@ -17,17 +17,35 @@ const MarkerMenu = ({ setMarkerDescription , setMarkerTitle, title, description,
 
   const handleSave = event => {
     event.preventDefault();
-    setMarkerTitle(title);
-    setMarkerDescription(newDescription); // 
+    console.log("desc marker menu: " + newTitle)
+    console.log("title marker menu: " + newDescription)
+    setMarkerTitle(newTitle);
+    setMarkerDescription(newDescription);  
+    
     // Update the title and description using the provided functions
-    onSave(); // Call the onSave function to persist changes
+    console.log("desc marker menu: " + newTitle)
+    console.log("title marker menu: " + newDescription)
+
     setEditIsShown(false);
-    console.log("Description in marker menu: " + description)
 
   };
 
   return (
-        <div >
+        <div  style={{
+          ...style,
+          position: 'absolute',
+          backgroundColor: 'white',
+          zIndex: 1000,
+          display:"flex"
+        }} >
+          <button
+            className="ml-auto"
+            onClick={onClose}
+            style={{ cursor: 'pointer' }}
+            
+          >
+            x
+          </button>
         {!isEditShown ? 
           <div className="flex flex-col">
         <button className="bg-blue-500 text-white rounded p-2 my-2" onClick={handleEditClick}>Edit Marker</button>
@@ -37,10 +55,10 @@ const MarkerMenu = ({ setMarkerDescription , setMarkerTitle, title, description,
         <form className="flex flex-col">
           <label>
               Title:
-              <input className="border " type="text" name="name" onChange={(e) =>{ setMarkerTitle(e.target.value)}}/>
+              <input className="border " type="text" name="name" value={newTitle} onChange={(e) =>{ setNewTitle(e.target.value)}}/>
           </label> <label>
               Description:
-              <input className="border" type="text" name="name" onChange={(e) => {setMarkerDescription(e.target.value)  }}/>
+              <input className="border" type="text" name="name" value={newDescription} onChange={(e) => {setNewDescription(e.target.value)  }}/>
          </label>
          <button onClick={handleSave}>Save</button>
         </form>

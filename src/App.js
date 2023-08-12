@@ -5,11 +5,14 @@ import React from "react";
 import RegisterPage from './components/RegisterPage/RegisterPage';
 import HitchhikersPage from './components/HitchhikersPage/HitchhikersPage';
 import MapPage from './components/MapPage/MapPage';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+
 function App() {
   return (
     <div className="App">
     <BrowserRouter>
     <Routes>
+      
       <Route path="/" element={<HomePage/>}/>
       <Route path="/login" element={<LoginPage/>}/>
       <Route path="/register" element={<RegisterPage/>}/>
