@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useMarkerContext } from './MarkerContext';
+import axios from 'axios';
 
 const MarkerMenu = ({ id, style, onClose }) => {
   const { markers, updateMarker, currentId } = useMarkerContext();
@@ -13,6 +14,15 @@ const MarkerMenu = ({ id, style, onClose }) => {
     event.preventDefault();
     updateMarker(id, { title: newTitle, description: newDescription });
     onClose();
+    axios.put(`http://localhost:8080/markers/${id}`, {
+      updateMarker
+    })
+    .then((response) => {
+      console.log("Success", response)
+    })
+    .catch((error) => {
+      console.error("While updating marker, following error occured: " + error)
+    })
   };
 
   const handleEdit = event => {

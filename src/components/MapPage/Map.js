@@ -5,7 +5,7 @@ import { useState } from 'react';
 import MarkerMenu from './MarkerMenu.js';
 import MarkerInfo from './MarkerInfo';
 import { useMarkerContext } from './MarkerContext'; // Adjust the path accordingly
-
+import axios from 'axios';
 
 const Map = ({ apiKey, lat, lng, zoom }) => {
   const mapContainerRef = useRef(null);
@@ -60,27 +60,27 @@ const handleCloseMenu = () => {
           };
 
 
-          // const jsonMarkerData = JSON.stringify({
-          //   id: newMarkerData.id,
-          //   title: newMarkerData.title,
-          //   description: newMarkerData.description,
-          //   lat: Math.round(newMarkerData.marker.position.lat() * 100) / 100,
-          //   lng: Math.round(newMarkerData.marker.position.lng() * 100) / 100,
-          // });
+          const jsonMarkerData = JSON.stringify({
+            id: newMarkerData.id,
+            title: newMarkerData.title,
+            description: newMarkerData.description,
+            lat: Math.round(newMarkerData.marker.position.lat() * 100) / 100,
+            lng: Math.round(newMarkerData.marker.position.lng() * 100) / 100,
+          });
 
-          // axios
-          //   .post('http://localhost:8080/addMarker', jsonMarkerData, {
-          //     headers: {
-          //       'Content-Type': 'application/json',
-          //     },
-          //   })
-          //   .then(response => {
-          //     const addedMarker = response.data;
-          //     setMarkers(prevMarkers => [...prevMarkers, addedMarker]);
-          //   })
-          //   .catch(error => {
-          //     console.error('Error adding marker: ' + error);
-          //   });
+          axios
+            .post('http://localhost:8080/addMarker', jsonMarkerData, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
+            .then(response => {
+              const addedMarker = response.data;
+              setMarkers(prevMarkers => [...prevMarkers, addedMarker]);
+            })
+            .catch(error => {
+              console.error('Error adding marker: ' + error);
+            });
 
      
 
