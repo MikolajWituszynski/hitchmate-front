@@ -4,21 +4,21 @@ import { createRoot } from 'react-dom/client';
 import { useState } from 'react';
 import MarkerMenu from './MarkerMenu.js';
 import MarkerInfo from './MarkerInfo';
-import axios from 'axios';
+import { useMarkerContext } from './MarkerContext'; // Adjust the path accordingly
+
 
 const Map = ({ apiKey, lat, lng, zoom }) => {
   const mapContainerRef = useRef(null);
-  const [selectedMarker, setSelectedMarker] = useState(null);
-  const [selectedMarkerRightClick, setSelectedMarkerRightClick] = useState(null);
+  const { markers, setMarkers, setSelectedMarkerRightClick,setSelectedMarker, selectedMarkerRightClick, selectedMarker  } = useMarkerContext();
 
+ 
   const [markerPixelPositionX, setMarkerPixelPositionX] = useState(null);
   const [markerPixelPositionY, setMarkerPixelPositionY] = useState(null);
   const [markerPixelPositionXMenu, setMarkerPixelPositionXMenu] = useState(null);
   const [markerPixelPositionYMenu, setMarkerPixelPositionYMenu] = useState(null);
-  const [markers, setMarkers] = useState([])
-  const [isMenuVisible, setMenuVisible] = useState(true)
-  const [isInfoVisible, setInfoVisible] = useState(true)
-
+  const [isMenuVisible, setMenuVisible] = useState(false)
+  const [isInfoVisible, setInfoVisible] = useState(false)
+  const [selectedMarkerId, setSelectedMarkerId] = useState(null);
 
 const handleCloseMenu = () => {
  setMenuVisible(false)
@@ -41,8 +41,9 @@ const handleCloseMenu = () => {
         
         let markerCounter = 0;
         let mapClickListener, markerClickListener, markerRightClickListener, domReadyListener;
-        let markerInfoWindow;
+      
 
+     
         mapClickListener = map.addListener('click', e => {
           const markerId = markerCounter;
           const newMarkerData = {
@@ -57,6 +58,7 @@ const handleCloseMenu = () => {
               map: map,
             }),
           };
+
 
           // const jsonMarkerData = JSON.stringify({
           //   id: newMarkerData.id,
@@ -80,117 +82,111 @@ const handleCloseMenu = () => {
           //     console.error('Error adding marker: ' + error);
           //   });
 
-          markerInfoWindow = new google.maps.InfoWindow({
-            content: `<div id="${markerId}"></div>`,
-          });
+     
 
           markerClickListener = newMarkerData.marker.addListener('click', e => {
             setInfoVisible(true);
+
             let scale = Math.pow(2, map.getZoom());
             let nw = new google.maps.LatLng(
               map.getBounds().getNorthEast().lat(),
               map.getBounds().getSouthWest().lng()
             );
+            setSelectedMarkerId(newMarkerData.id)
+           
             let worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
             let worldCoordinate = map.getProjection().fromLatLngToPoint(e.latLng);
-            if (newMarkerData.description === null || newMarkerData.description === "") {
-              newMarkerData.description = "Default description"; // Set a default description here
-            }
-            setSelectedMarker(newMarkerData);
-            if (newMarkerData.description) {
-              console.log(newMarkerData.description);
-            }
-            console.log("description for selected marker: " + selectedMarker)
             let pixelOffsetX = Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale);
             let pixelOffsetY = Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale);
 
             setMarkerPixelPositionX(pixelOffsetX);
             setMarkerPixelPositionY(pixelOffsetY);
+
           });
 
           markerRightClickListener = newMarkerData.marker.addListener('rightclick', e => {
             setMenuVisible(true);
-
             let scale = Math.pow(2, map.getZoom());
             let nw = new google.maps.LatLng(
               map.getBounds().getNorthEast().lat(),
               map.getBounds().getSouthWest().lng()
             );
-            console.log("rightclick")
             let worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
             let worldCoordinate = map.getProjection().fromLatLngToPoint(e.latLng);
-            if (newMarkerData.description === null || newMarkerData.description === "") {
-              newMarkerData.description = "Default description"; // Set a default description here
-            }
-            setSelectedMarkerRightClick(newMarkerData);
-            if (newMarkerData.description) {
-              console.log(newMarkerData.description);
-            }
-            console.log("description for selected marker: " + selectedMarkerRightClick)
+            setSelectedMarkerId(newMarkerData.id)
+            
+            console.log("map selectedRigh marker: " + selectedMarker)
            
+            
             let pixelOffsetX = Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale);
             let pixelOffsetY = Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale);
 
             setMarkerPixelPositionXMenu(pixelOffsetX);
             setMarkerPixelPositionYMenu(pixelOffsetY);
+
           });
 
-          
-          
           setMarkers(prevMarkers => [...prevMarkers, newMarkerData]);
-          console.log(markers)
           markerCounter++;
         });
 
-        return () => {
-          google.maps.event.removeListener(mapClickListener);
-          google.maps.event.removeListener(markerClickListener);
-          google.maps.event.removeListener(markerRightClickListener);
-          google.maps.event.removeListener(domReadyListener);
-          markerInfoWindow.close();
-        };
-      })
-      .catch(error => {
-        console.error('Error occurred while loading Google Maps API: ', error);
-      })
-      .finally(() => {
-        delete window.initMap;
-      });
-  }, [apiKey, lat, lng, zoom]);
 
+
+        // return () => {
+        //   google.maps.event.removeListener(mapClickListener);
+        //   google.maps.event.removeListener(markerClickListener);
+        //   google.maps.event.removeListener(markerRightClickListener);
+        //   google.maps.event.removeListener(domReadyListener);
+        // };
+      })
+      // .catch(error => {
+      //   console.error('Error occurred while loading Google Maps API: ', error);
+      // })
+      // .finally(() => {
+      //   delete window.initMap;
+      // });
+  }, [apiKey, lat, lng, zoom]);
+  console.log("markers: ",markers)
+
+  // console.log(markers)
+  // console.log("selected Marker: " + selectedMarker)
   return (
     <div style={{ position: 'relative', width: '100%', height: '100vh' }} ref={mapContainerRef}>
-      {isInfoVisible && selectedMarker && selectedMarker.marker && (
+      
+       {isInfoVisible && markers[selectedMarkerId] && (
         <MarkerInfo
           style={{ left: `${markerPixelPositionX}px`, top: `${markerPixelPositionY}px` }}
-          lat={selectedMarker.marker.getPosition().lat()}
-          lng={selectedMarker.marker.getPosition().lng()}
-          description={selectedMarker.description}
-          title={selectedMarker.title}
+          lat={markers[selectedMarkerId].marker.getPosition().lat()}
+          lng={markers[selectedMarkerId].marker.getPosition().lng()}
+          description={markers[selectedMarkerId].description}
+          title={markers[selectedMarkerId].title}
           onClose={handleCloseInfo}
         />
       )}
-        {isMenuVisible && selectedMarkerRightClick && selectedMarkerRightClick.marker && (
+        {isMenuVisible &&  markers[selectedMarkerId] && (
         <MarkerMenu
         style={{ left: `${markerPixelPositionXMenu}px`, top: `${markerPixelPositionYMenu}px` }}
-
-        description={selectedMarkerRightClick.description}
-        title={selectedMarkerRightClick.title}
+        id={selectedMarkerId}
+        description={markers[selectedMarkerId].description}
+        title={markers[selectedMarkerId].title}
         setMarkerDescription={newDescription => {
-          const updatedMarker = { ...selectedMarkerRightClick, description: newDescription };
-          setSelectedMarkerRightClick(updatedMarker);
+          const updatedMarkers = markers.map(marker =>
+            marker.id === selectedMarkerId? { ...marker, description: newDescription } : marker
+          );
+          setMarkers(updatedMarkers);
         }}
         setMarkerTitle={newTitle => {
-          const updatedMarker = { ...selectedMarkerRightClick, title: newTitle };
-          setSelectedMarkerRightClick(updatedMarker);
+          const updatedMarkers = markers.map(marker =>
+            marker.id === selectedMarkerId ? { ...marker, title: newTitle } : marker
+          );
+          setMarkers(updatedMarkers);
         }}
        // Save changes to the selectedMarker
        onClose={handleCloseMenu}
-
         />
-      )}
-
-    </div>
+        )}
+        </div>
+        
   );
 };
 
