@@ -4,36 +4,102 @@ import { useMarkerContext } from './MarkerContext';
 const MarkerMenu = ({ id, style, onClose }) => {
   const { markers, updateMarker, currentId } = useMarkerContext();
   const markerData = markers.find(marker => marker.id === id);
-  // if (!markerData) {
-  //   return null; // Handle case where marker is not found
-  // }
-  // Local state for title and description
+  const [isEditOpen, setEditClose] = useState(false);
+
   const [newDescription, setNewDescription] = useState(markerData.description || "");
   const [newTitle, setNewTitle] = useState(markerData.title || "");
 
   const handleSave = event => {
     event.preventDefault();
     updateMarker(id, { title: newTitle, description: newDescription });
-    console.log(updateMarker)
-  
     onClose();
   };
 
+  const handleEdit = event => {
+    setEditClose(true);
+  };
+
+  const handleDelete = event => {
+    updateMarker(id, {});
+  };
+
   return (
-    <div style={{ ...style, position: 'absolute', backgroundColor: 'white', zIndex: 1000, display: "flex" }}>
-      <button className="ml-auto" onClick={onClose} style={{ cursor: 'pointer' }}>x</button>
+    <div
+      style={{
+        ...style,
+        position: 'absolute',
+        backgroundColor: 'white',
+        zIndex: 1000,
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '16px',
+        border: '1px solid #ccc',
+        borderRadius: '8px',
+        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+      }}
+    >
+      <button
+        className="ml-auto"
+        onClick={onClose}
+        style={{
+          cursor: 'pointer',
+          background: 'none',
+          border: 'none',
+          fontSize: '18px',
+          color: '#888',
+          alignSelf: 'flex-end',
+        }}
+      >
+        ✕
+      </button>
+      {!isEditOpen ? (
+        <div className="flex flex-col mt-2">
+          <button
+            className="bg-blue-500 text-white rounded p-2 mb-2"
+            onClick={handleEdit}
+            style={{ cursor: 'pointer' }}
+          >
+            Edit
+          </button>
+          <button
+            className="bg-red-500 text-white rounded p-2"
+            onClick={handleDelete}
+            style={{ cursor: 'pointer' }}
+          >
+            Delete
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col mt-2">
+          <label className="mb-1 text-sm font-semibold">Title:</label>
+          <input
+            placeholder="Title..."
+            className="border rounded p-1 mb-2"
+            type="text"
+            name="name"
+            value={newTitle}
+            onChange={e => setNewTitle(e.target.value)}
+          />
+          <label className="mb-1 text-sm font-semibold">Description:</label>
+          <textarea
+            placeholder="Description..."
+            className="border rounded p-1"
+            rows="4"
+            value={newDescription}
+            onChange={e => setNewDescription(e.target.value)}
+          />
+        
       
-      <div className="flex flex-col">
-        <label>
-          Title:
-          <input className="border" type="text" name="name" value={newTitle} onChange={e => setNewTitle(e.target.value)} />
-        </label>
-        <label>
-          Description:
-          <input className="border" type="text" name="name" value={newDescription} onChange={e => setNewDescription(e.target.value)} />
-        </label>
-        <button onClick={handleSave}>Save</button>
+      <button
+        className="bg-blue-500 text-white rounded p-2 mt-2"
+        onClick={handleSave}
+        style={{ cursor: 'pointer', alignSelf: 'flex-end' }}
+      >
+        Save
+      </button>
+      
       </div>
+      )}
     </div>
   );
 };
