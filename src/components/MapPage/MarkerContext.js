@@ -24,7 +24,7 @@ export function MarkerProvider({ children }) {
       value={{
         markers,
         setMarkers,
-        updateMarker,
+        updateMarker
       }}
     >
       {children}

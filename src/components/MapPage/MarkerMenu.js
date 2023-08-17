@@ -25,8 +25,6 @@ const MarkerMenu = ({ id, style, onClose }) => {
       },
     })
     .then((response) => {
-      console.log("new desc2: ", newDescription)
-
       console.log("Success", response)
     })
     .catch((error) => {
@@ -38,11 +36,16 @@ const MarkerMenu = ({ id, style, onClose }) => {
   const handleEdit = event => {
     setEditClose(true);
   };
+ 
 
-  const handleDelete = event => {
-    updateMarker(id, {});
-  };
+  const handleDelete = () => {
+    markers[id].marker.setMap(null)
 
+    let index = id;
+    const markersAfterDel = markers.splice(markers[index],1)
+  }
+  
+ 
   return (
     <div
       style={{

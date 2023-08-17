@@ -22,24 +22,57 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
 
 const handleCloseMenu = () => {
  setMenuVisible(false)
- 
-
 }
 
   const handleCloseInfo = () => {
     setInfoVisible(false)
-   
   };
+
+
+  
+  
 
   useEffect(() => {
     loadGoogleMapsApi(apiKey)
+    
       .then(google => {
         const map = new google.maps.Map(mapContainerRef.current, {
           center: { lat, lng },
-          zoom,
-        });
-        
+          zoom
+        }); 
         let markerCounter = 0;
+
+        
+        axios.get('http://localhost:8080/markers')
+        .then((response) => {
+          const data = response.data;
+          console.log(data); // Log the received marker data
+      
+          data.forEach(markerData => {
+
+            const newMarkerData = {
+              id: markerData.id,
+              title: markerData.title,
+              description: markerData.description,
+              marker: new google.maps.Marker({
+                position: {
+                  lat: markerData.lat,
+                  lng: markerData.lng,
+                },
+                map: map,
+              }),
+            };
+            setMarkers(prevMarkers => [...prevMarkers, newMarkerData]);
+            markerCounter++;
+          });
+      
+        })
+        .catch(error => {
+          console.error("Error occurred:", error);
+        });
+
+        
+
         let mapClickListener, markerClickListener, markerRightClickListener, domReadyListener;
       
 
@@ -75,8 +108,7 @@ const handleCloseMenu = () => {
               },
             })
             .then(response => {
-              const addedMarker = response.data;
-              setMarkers(prevMarkers => [...prevMarkers, addedMarker]);
+              console.log("Success", response)
             })
             .catch(error => {
               console.error('Error adding marker: ' + error);
@@ -114,9 +146,7 @@ const handleCloseMenu = () => {
             let worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
             let worldCoordinate = map.getProjection().fromLatLngToPoint(e.latLng);
             setSelectedMarkerId(newMarkerData.id)
-            
-            console.log("map selectedRigh marker: " + selectedMarker)
-           
+          
             
             let pixelOffsetX = Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale);
             let pixelOffsetY = Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale);
@@ -183,6 +213,7 @@ const handleCloseMenu = () => {
         }}
        // Save changes to the selectedMarker
        onClose={handleCloseMenu}
+    
         />
         )}
         </div>
