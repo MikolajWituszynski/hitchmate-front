@@ -9,9 +9,9 @@ import axios from 'axios';
 
 const Map = ({ apiKey, lat, lng, zoom }) => {
   const mapContainerRef = useRef(null);
-  const { markers, setMarkers, setSelectedMarkerRightClick,setSelectedMarker, selectedMarkerRightClick, selectedMarker  } = useMarkerContext();
+  const { markers, setMarkers} = useMarkerContext();
 
- 
+
   const [markerPixelPositionX, setMarkerPixelPositionX] = useState(null);
   const [markerPixelPositionY, setMarkerPixelPositionY] = useState(null);
   const [markerPixelPositionXMenu, setMarkerPixelPositionXMenu] = useState(null);
@@ -20,17 +20,12 @@ const Map = ({ apiKey, lat, lng, zoom }) => {
   const [isInfoVisible, setInfoVisible] = useState(false)
   const [selectedMarkerId, setSelectedMarkerId] = useState(null);
 
-const handleCloseMenu = () => {
- setMenuVisible(false)
-}
-
+  const handleCloseMenu = () => {
+    setMenuVisible(false)
+    }
   const handleCloseInfo = () => {
     setInfoVisible(false)
   };
-
-
-  
-  
 
   useEffect(() => {
     loadGoogleMapsApi(apiKey)
@@ -40,17 +35,19 @@ const handleCloseMenu = () => {
           center: { lat, lng },
           zoom
         }); 
-        let markerCounter = 0;
 
         
         axios.get('http://localhost:8080/markers')
         .then((response) => {
+
           const data = response.data;
-          console.log(data); // Log the received marker data
-      
+          let markerCounter =0
+
+          console.log("Here is the received data: ", data); // Log the received marker data
+          let newMarkerData;
           data.forEach(markerData => {
 
-            const newMarkerData = {
+             newMarkerData = {
               id: markerData.id,
               title: markerData.title,
               description: markerData.description,
@@ -62,46 +59,74 @@ const handleCloseMenu = () => {
                 map: map,
               }),
             };
+            console.log("newMarkerDataAdded",newMarkerData)
+
             setMarkers(prevMarkers => [...prevMarkers, newMarkerData]);
-            markerCounter++;
+            console.log("markers: ", markers)
           });
-      
-        })
-        .catch(error => {
-          console.error("Error occurred:", error);
-        });
+          let mapClickListener, markerClickListener,markerAddClickListener, markerRightClickListener, domReadyListener;
 
-        
-
-        let mapClickListener, markerClickListener, markerRightClickListener, domReadyListener;
-      
-
-     
-        mapClickListener = map.addListener('click', e => {
-          const markerId = markerCounter;
-          const newMarkerData = {
-            id: markerId,
-            title: '',
-            description: '',
-            marker: new google.maps.Marker({
-              position: {
-                lat: e.latLng.lat(),
-                lng: e.latLng.lng(),
-              },
-              map: map,
-            }),
+          const handleMarkerClick = (newMarkerData) => {
+            setInfoVisible(true);
+            let scale = Math.pow(2, map.getZoom());
+            let nw = new google.maps.LatLng(
+              map.getBounds().getNorthEast().lat(),
+              map.getBounds().getSouthWest().lng()
+            );
+            setSelectedMarkerId(newMarkerData.id);
+            let worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
+            let worldCoordinate = map.getProjection().fromLatLngToPoint(newMarkerData.marker.getPosition());
+            let pixelOffsetX = Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale);
+            let pixelOffsetY = Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale);
+            setMarkerPixelPositionX(pixelOffsetX);
+            setMarkerPixelPositionY(pixelOffsetY);
           };
-
-          console.log(newMarkerData.marker.getPosition().lat())
-          const jsonMarkerData = JSON.stringify({
-            id: newMarkerData.id,
-            title: newMarkerData.title,
-            description: newMarkerData.description,
-            lat: Math.round(newMarkerData.marker.position.lat() * 100) / 100,
-            lng: Math.round(newMarkerData.marker.position.lng() * 100) / 100,
+         
+          const handleMarkerRightClick = (newMarkerData) => {
+            setMenuVisible(true);
+            console.log("clicked")
+            let scale = Math.pow(2, map.getZoom());
+            let nw = new google.maps.LatLng(
+              map.getBounds().getNorthEast().lat(),
+              map.getBounds().getSouthWest().lng()
+            );
+            let worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
+            let worldCoordinate = map.getProjection().fromLatLngToPoint(newMarkerData.marker.getPosition());
+            setSelectedMarkerId(newMarkerData.id);
+            let pixelOffsetX = Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale);
+            let pixelOffsetY = Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale);
+            setMarkerPixelPositionXMenu(pixelOffsetX);
+            setMarkerPixelPositionYMenu(pixelOffsetY);
+          };
+          console.log("foreach")
+          markers.forEach(markerData => {
+            console.log("each marker",markerData)
+            const marker = markerData.marker;
+            google.maps.event.addListener(marker, 'click', () => handleMarkerClick(markerData));
+            google.maps.event.addListener(marker, 'rightclick', () => handleMarkerRightClick(markerData));
           });
-
-          axios
+          map.addListener('click', e => {
+            const markerId = markerCounter;
+            const newMarkerData = {
+              id: markerId,
+              title: '',
+              description: '',
+              marker: new google.maps.Marker({
+                position: {
+                  lat: e.latLng.lat(),
+                  lng: e.latLng.lng(),
+                },
+                map: map,
+              }),
+            };
+            const jsonMarkerData = JSON.stringify({
+              id: newMarkerData.id,
+              title: newMarkerData.title,
+              description: newMarkerData.description,
+              lat: Math.round(newMarkerData.marker.position.lat() * 100) / 100,
+              lng: Math.round(newMarkerData.marker.position.lng() * 100) / 100,
+            });
+            axios
             .post('http://localhost:8080/addMarker', jsonMarkerData, {
               headers: {
                 'Content-Type': 'application/json',
@@ -113,70 +138,16 @@ const handleCloseMenu = () => {
             .catch(error => {
               console.error('Error adding marker: ' + error);
             });
-
-     
-
-          markerClickListener = newMarkerData.marker.addListener('click', e => {
-            setInfoVisible(true);
-
-            let scale = Math.pow(2, map.getZoom());
-            let nw = new google.maps.LatLng(
-              map.getBounds().getNorthEast().lat(),
-              map.getBounds().getSouthWest().lng()
-            );
-            setSelectedMarkerId(newMarkerData.id)
-           
-            let worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
-            let worldCoordinate = map.getProjection().fromLatLngToPoint(e.latLng);
-            let pixelOffsetX = Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale);
-            let pixelOffsetY = Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale);
-
-            setMarkerPixelPositionX(pixelOffsetX);
-            setMarkerPixelPositionY(pixelOffsetY);
-
-          });
-
-          markerRightClickListener = newMarkerData.marker.addListener('rightclick', e => {
-            setMenuVisible(true);
-            let scale = Math.pow(2, map.getZoom());
-            let nw = new google.maps.LatLng(
-              map.getBounds().getNorthEast().lat(),
-              map.getBounds().getSouthWest().lng()
-            );
-            let worldCoordinateNW = map.getProjection().fromLatLngToPoint(nw);
-            let worldCoordinate = map.getProjection().fromLatLngToPoint(e.latLng);
-            setSelectedMarkerId(newMarkerData.id)
-          
-            
-            let pixelOffsetX = Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale);
-            let pixelOffsetY = Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale);
-
-            setMarkerPixelPositionXMenu(pixelOffsetX);
-            setMarkerPixelPositionYMenu(pixelOffsetY);
-
-          });
-
-          setMarkers(prevMarkers => [...prevMarkers, newMarkerData]);
-          markerCounter++;
-        });
-
-
-
-        // return () => {
-        //   google.maps.event.removeListener(mapClickListener);
-        //   google.maps.event.removeListener(markerClickListener);
-        //   google.maps.event.removeListener(markerRightClickListener);
-        //   google.maps.event.removeListener(domReadyListener);
-        // };
+            google.maps.event.addListener(newMarkerData.marker, 'click', () => handleMarkerClick(newMarkerData));
+            google.maps.event.addListener(newMarkerData.marker, 'rightclick', () => handleMarkerRightClick(newMarkerData));
+            setMarkers(prevMarkers => [...prevMarkers, newMarkerData]);
+            markerCounter++;
+            console.log("new marker data", markerCounter)
       })
-      // .catch(error => {
-      //   console.error('Error occurred while loading Google Maps API: ', error);
-      // })
-      // .finally(() => {
-      //   delete window.initMap;
-      // });
+    })
+  })
   }, [apiKey, lat, lng, zoom]);
-  console.log("markers: ",markers)
+  console.log(markers)
 
   // console.log(markers)
   // console.log("selected Marker: " + selectedMarker)
@@ -217,8 +188,8 @@ const handleCloseMenu = () => {
         />
         )}
         </div>
-        
-  );
+   
+ );
+    
 };
-
 export default Map;
