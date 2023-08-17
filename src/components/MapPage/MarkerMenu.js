@@ -9,20 +9,30 @@ const MarkerMenu = ({ id, style, onClose }) => {
 
   const [newDescription, setNewDescription] = useState(markerData.description || "");
   const [newTitle, setNewTitle] = useState(markerData.title || "");
-
+  
   const handleSave = event => {
     event.preventDefault();
     updateMarker(id, { title: newTitle, description: newDescription });
-    onClose();
-    axios.put(`http://localhost:8080/markers/${id}`, {
-      updateMarker
+    const jsonMarkerData = {
+      title: newTitle,
+      description: newDescription
+    }
+    console.log("new desc: ", newDescription)
+    
+    axios.put(`http://localhost:8080/markers/${id}?title=${newTitle}&description=${newDescription}`,jsonMarkerData, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
     .then((response) => {
+      console.log("new desc2: ", newDescription)
+
       console.log("Success", response)
     })
     .catch((error) => {
       console.error("While updating marker, following error occured: " + error)
     })
+    onClose();
   };
 
   const handleEdit = event => {

@@ -18,7 +18,7 @@ const MarkerInfo = ({ style, onClose, description, title,lat,lng }) => {
           flexDirection: 'column',
         }}
       >
-        <button c  className="ml-auto"
+        <button className="ml-auto"
     onClick={onClose}
     style={{
       cursor: 'pointer',

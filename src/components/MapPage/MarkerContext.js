@@ -17,6 +17,8 @@ export function MarkerProvider({ children }) {
     setMarkers(updatedMarkers);
   };
 
+  
+
   return (
     <MarkerContext.Provider
       value={{

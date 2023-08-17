@@ -59,7 +59,7 @@ const handleCloseMenu = () => {
             }),
           };
 
-
+          console.log(newMarkerData.marker.getPosition().lat())
           const jsonMarkerData = JSON.stringify({
             id: newMarkerData.id,
             title: newMarkerData.title,
