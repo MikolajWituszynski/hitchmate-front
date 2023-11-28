@@ -7,8 +7,7 @@ const MapPage = () => {
   
   return (
   <div>
-    <NavBar/>
-    <Map apiKey={googleApiKey} lat={46.7128} lng={6.0060} zoom ={10}></Map>
+    <Map apiKey={googleApiKey} lat={50.7128} lng={44.0060} zoom ={10}></Map>
     </div>
   )
 }
