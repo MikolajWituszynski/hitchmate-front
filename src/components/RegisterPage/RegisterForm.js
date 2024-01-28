@@ -24,18 +24,14 @@ const RegisterForm = () => {
       try {
         const checkUserResponse = await axios.get(`http://localhost:8080/users?username=${formData.username}`);
         const existingUser = checkUserResponse.data;
-        if(existingUser){ 
-          console.log("user exists")
-        } else {
-       
-       
-        const response = await axios.post('http://localhost:8080/register', formData);
+      
+        const response = await axios.post('http://localhost:8080/users/register', formData);
         console.log("Response: " + response.formData); 
         setIsRegistered(true);
         let timer = setTimeout(function() {
           navigate("/home")
       }, 6000);
-      }
+    
     } catch (error) {
         console.error(error); 
       }
