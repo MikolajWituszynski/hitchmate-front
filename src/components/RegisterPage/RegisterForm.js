@@ -3,17 +3,32 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import {useNavigate} from 'react-router-dom';
 import {ThreeCircles} from  'react-loader-spinner'
-
+import * as yup from "yup";
+import { yupResolver } from '@hookform/resolvers/yup';
 
 const RegisterForm = () => {
   const navigate = useNavigate();
-
+  const formSchema = yup.object().shape({
+    username: yup.string()
+    .required("Username is required"),
+    password: yup.string()
+      .required("Password is required")
+      .min(4, "Password length should be at least 4 characters")
+      .max(12, "Password cannot exceed more than 12 characters"),
+    cpassword: yup.string()
+      .required("Confirm Password is required")
+      .min(4, "Password length should be at least 4 characters")
+      .max(12, "Password cannot exceed more than 12 characters"),
+      email: yup.string()
+      .required("Email is required")
+      .email("Must be a valid email")
+  });
   const { 
     register,
      handleSubmit,
      formState: { errors },
      watch,
-    } = useForm();
+    } = useForm({ resolver: yupResolver(formSchema)});
 
     const [isRegistered, setIsRegistered] = useState(false);
 
@@ -23,13 +38,12 @@ const RegisterForm = () => {
      
       try {
         const checkUserResponse = await axios.get(`http://localhost:8080/users?username=${formData.username}`);
-        const existingUser = checkUserResponse.data;
       
         const response = await axios.post('http://localhost:8080/users/register', formData);
         console.log("Response: " + response.formData); 
         setIsRegistered(true);
         let timer = setTimeout(function() {
-          navigate("/home")
+          navigate("/login")
       }, 6000);
     
     } catch (error) {
@@ -84,7 +98,7 @@ const RegisterForm = () => {
       name="email"
       className="px-3 py-3 border rounded mb-2"
        placeholder="email" 
-       {...register("email", {required: "Email is required"})}
+       {...register("email")}
        autoComplete="off"/>
       {errors.password && <p className="text-red-700 rounded relative">{errors.password.message}</p>}
       <input
@@ -92,7 +106,7 @@ const RegisterForm = () => {
        name="password"
        className="px-3 py-3 border rounded mb-2"
         placeholder="password" 
-        {...register("password",{ required: "Password is required", maxLength: 20, minLength:8 })} 
+        {...register("password")} 
         />
         {errors.secondPassword && <p className="text-red-700 rounded relative">{errors.secondPassword.message}</p>}
         <input
