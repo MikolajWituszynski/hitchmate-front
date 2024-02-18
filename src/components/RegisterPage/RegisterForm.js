@@ -37,9 +37,7 @@ const RegisterForm = () => {
       console.log(data.username)
      
       try {
-        const checkUserResponse = await axios.get(`http://localhost:8080/users?username=${formData.username}`);
-      
-        const response = await axios.post('http://localhost:8080/users/register', formData);
+        const response = await axios.post('http://localhost:8080/api/v1/auth/register', formData);
         console.log("Response: " + response.formData); 
         setIsRegistered(true);
         let timer = setTimeout(function() {

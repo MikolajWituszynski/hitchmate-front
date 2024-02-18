@@ -1,6 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Routes, Route, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -10,17 +11,23 @@ const LoginForm = () => {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data, e) => {
+  const onSubmit = async (data, e) => {
     e.preventDefault();
-    console.log(data);
-    alert(`You are logged in ${data.username}`);
-  };
+    try {
+      const response = await axios.post("http://localhost:8080/api/v1/auth/authenticate",JSON.stringify(data))
+      if(!response.ok){
+        throw new Error('Login failed')
+      }
+    
+      const responseData = await response.json();
+      console.log(responseData);
+      alert(`You are logged in ${responseData.username}`);
+      navigate('/home');
+    } catch(error) {
+      console.error("Login error: " + error.message);
+    }
 
-  const navigateToHome = () => {
-    console.log('click');
-    navigate('/');
-  };
-
+  }
   return (
     <div>
       <div className="flex flex-col items-center justify-center h-screen  ">
@@ -32,17 +39,6 @@ const LoginForm = () => {
             className="px-3 py-3 border rounded mb-2"
             placeholder="Username"
             {...register('username', { required: 'Username is required' })}
-          />
-
-          {errors.email && <p className="text-red-700 rounded relative">{errors.email.message}</p>}
-          <input
-            type="email"
-            name="email"
-            className="px-3 py-3 border rounded mb-2"
-            placeholder="Email"
-            {...register('email', { required: 'Email is required' })}
-            required
-            autoComplete="off"
           />
 
           {errors.password && <p className="text-red-700 rounded relative">{errors.password.message}</p>}
